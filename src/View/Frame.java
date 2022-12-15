@@ -80,13 +80,15 @@ public class Frame extends JFrame implements ActionListener, ListSelectionListen
         }
 
         private void delete_Invoice(){
-            invoice_table_controller.getInvoice_Table().remove(invoice_Selected_Row);
+        int selected=invoice_Selected_Row;
+        invoice_Selected_Row=-1;
+            invoice_table_controller.getInvoice_Table().remove(selected);
             items_dtm.setRowCount(0);
             invoice_Number_Data_Label.setText("");
             invoice_Data_TF.setText("");
             customer_Name_TF.setText("");
             invoice_Total_Data_Label.setText("");
-            invoice_dtm.removeRow(invoice_Selected_Row);
+            invoice_dtm.removeRow(selected);
             invoice_dtm.fireTableDataChanged();
         }
 
@@ -168,6 +170,7 @@ public class Frame extends JFrame implements ActionListener, ListSelectionListen
 
 
         private void loadFileMenuItemActionPerformed (java.awt.event.ActionEvent evt){
+
             JOptionPane.showMessageDialog(this, "Please select Invoice header file", "Invoice Header", JOptionPane.WARNING_MESSAGE);
             JFileChooser fc = new JFileChooser();
             File invoice_File=null;
@@ -183,14 +186,21 @@ public class Frame extends JFrame implements ActionListener, ListSelectionListen
                 item_File = fc.getSelectedFile();
             }
             try {
-                invoice_table_controller = new Merge_Data(invoice_File,item_File).merge_Invoice_Items();
+                if (invoice_File != null && item_File != null){
+                    invoice_table_controller = new Merge_Data(invoice_File, item_File).merge_Invoice_Items();
+                    invoice_Number_Data_Label.setText("");
+                    invoice_Data_TF.setText("");
+                    customer_Name_TF.setText("");
+                    invoice_Total_Data_Label.setText("");
+                    invoice_dtm.setRowCount(0);
+                    items_dtm.setRowCount(0);
                 for (int i = 0; i < invoice_table_controller.getInvoice_Table().size(); i++) {
                     Invoice_Table_Model invoice_table_model = invoice_table_controller.getInvoice_Table().get(i);
                     invoice_dtm.addRow(new Object[]{invoice_table_model.getInvoice_Number(), invoice_table_model.getInvoice_Date(),
                             invoice_table_model.getCustomer_Name(), invoice_table_model.getInvoice_Total()});
                 }
-                JOptionPane.showMessageDialog(this,"Data loaded successfully","Load Data", JOptionPane.INFORMATION_MESSAGE);
-
+                JOptionPane.showMessageDialog(this, "Data loaded successfully", "Load Data", JOptionPane.INFORMATION_MESSAGE);
+            }
 
             } catch (Exception ex) {
                 Logger.getLogger(Frame.class.getName()).log(Level.SEVERE, "Cannot Load files", ex);
@@ -288,25 +298,29 @@ public class Frame extends JFrame implements ActionListener, ListSelectionListen
                 public void valueChanged(ListSelectionEvent event) {
                     invoice_Selected_Row=invoice_Table.getSelectedRow();
                     try {
-                        Invoice_Table_Model invoice_table_model1 = invoice_table_controller.getInvoice_Table().get(invoice_Table.getSelectedRow());
-                        invoice_Number_Data_Label.setText(String.valueOf(invoice_table_model1.getInvoice_Number()));
-                        invoice_Data_TF.setText(String.valueOf(invoice_table_model1.getInvoice_Date()));
-                        customer_Name_TF.setText(String.valueOf(invoice_table_model1.getCustomer_Name()));
-                        invoice_Total_Data_Label.setText(String.valueOf(invoice_table_model1.getInvoice_Total()));
-                        items_dtm.setRowCount(0);
-                        if(invoice_table_model1.getItems().size()!=0) {
+                        if(invoice_Selected_Row!=-1) {
+                            Invoice_Table_Model invoice_table_model1 = invoice_table_controller.getInvoice_Table().get(invoice_Table.getSelectedRow());
+                            invoice_Number_Data_Label.setText(String.valueOf(invoice_table_model1.getInvoice_Number()));
+                            invoice_Data_TF.setText(String.valueOf(invoice_table_model1.getInvoice_Date()));
+                            customer_Name_TF.setText(String.valueOf(invoice_table_model1.getCustomer_Name()));
+                            invoice_Total_Data_Label.setText(String.valueOf(invoice_table_model1.getInvoice_Total()));
+                            items_dtm.setRowCount(0);
+                            if (invoice_table_model1.getItems().size() != 0) {
                                 for (int i = 0; i < invoice_table_model1.getItems().size(); i++) {
                                     Item_Table_Model item = invoice_table_model1.getItems().get(i);
-                                    item.setItem_Number(i+1);
+                                    item.setItem_Number(i + 1);
                                     items_dtm.addRow(new Object[]{item.getItem_Number(), item.getItem_Name(), item.getItem_Price(), item.getItem_Count(), item.getItem_Total()});
                                 }
+
                                 JOptionPane.showMessageDialog(invoice_Table, "Items loaded successfully", "Load Data", JOptionPane.INFORMATION_MESSAGE);
                             }
                             else{
                                 JOptionPane.showMessageDialog(invoice_Table, "This invoice empty", "Load Data", JOptionPane.INFORMATION_MESSAGE);
                             }
+                        }
+
                     } catch (Exception ex) {
-                        System.out.println("This item deleted");
+                        ex.printStackTrace();
                     }
                 }
             });
@@ -463,11 +477,13 @@ public class Frame extends JFrame implements ActionListener, ListSelectionListen
         }
 
         private void invoice_Data_TF_Action (){
-            invoice_dtm.setValueAt(customer_Name_TF.getText(),invoice_Selected_Row,1);
+            if(invoice_Data_TF.getText()!=""&&invoice_Selected_Row!=-1){
+            invoice_dtm.setValueAt(invoice_Data_TF.getText(),invoice_Selected_Row,1);}
         }
 
         private void customer_Name_Tf_Action (){
-            invoice_dtm.setValueAt(customer_Name_TF.getText(),invoice_Selected_Row,2);
+            if(customer_Name_TF.getText()!=""&&invoice_Selected_Row!=-1){
+            invoice_dtm.setValueAt(customer_Name_TF.getText(),invoice_Selected_Row,2);}
         }
 
 
