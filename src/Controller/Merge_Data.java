@@ -33,14 +33,13 @@ public class Merge_Data {
         return invoice_table_controller;
     }
     public void clear_Restore(Invoice_Table_Controller invoice_table_controller) throws FileNotFoundException {
-        if(invoice_table_controller.getInvoice_Table().size()>0){
         invoiceDataFileController.clear_File();
         itemDataFileController.clear_File();
         for(int i=0; i<invoice_table_controller.getInvoice_Table().size();i++){
             invoiceDataFileController.add_Invoice_Data(invoice_table_controller.getInvoice_Table().get(i));
             for(int j=0; j<invoice_table_controller.getInvoice_Table().get(i).getItems().size();j++){
                 itemDataFileController.add_Item_Data(invoice_table_controller.getInvoice_Table().get(i).getItems().get(j));
-            }
+
         }
 
     }
