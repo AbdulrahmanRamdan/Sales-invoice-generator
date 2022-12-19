@@ -8,8 +8,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class Merge_Data {
-    Invoice_Data_File_Controller invoiceDataFileController=new Invoice_Data_File_Controller();
-    Item_Data_File_Controller itemDataFileController=new Item_Data_File_Controller();
+    public Invoice_Data_File_Controller invoiceDataFileController=new Invoice_Data_File_Controller();
+    public Item_Data_File_Controller itemDataFileController=new Item_Data_File_Controller();
 
     public Merge_Data(){
 
@@ -43,5 +43,15 @@ public class Merge_Data {
         }
 
     }
+    }
+    public void add_data(Invoice_Table_Controller invoice_table_controller) throws FileNotFoundException {
+        for(int i=0; i<invoice_table_controller.getInvoice_Table().size();i++){
+            invoiceDataFileController.add_Invoice_Data(invoice_table_controller.getInvoice_Table().get(i));
+            for(int j=0; j<invoice_table_controller.getInvoice_Table().get(i).getItems().size();j++){
+                itemDataFileController.add_Item_Data(invoice_table_controller.getInvoice_Table().get(i).getItems().get(j));
+
+            }
+
+        }
     }
 }

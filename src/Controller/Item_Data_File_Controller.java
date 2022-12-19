@@ -11,8 +11,7 @@ import java.util.ArrayList;
 import java.util.zip.DataFormatException;
 
 public class Item_Data_File_Controller {
-    private String file_Path="InvoiceLines.csv";
-    private File file=new File(file_Path);
+    private File file=null;
 
     public File getFile() {
         return file;

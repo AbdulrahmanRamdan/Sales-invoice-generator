@@ -168,8 +168,8 @@ public class Frame extends JFrame implements ActionListener, ListSelectionListen
             initialize_Item_Dialog();
         }
 
-
-        private void loadFileMenuItemActionPerformed (java.awt.event.ActionEvent evt){
+   public Merge_Data merge_data=null;
+    private void loadFileMenuItemActionPerformed (java.awt.event.ActionEvent evt){
 
             JOptionPane.showMessageDialog(this, "Please select Invoice header file", "Invoice Header", JOptionPane.WARNING_MESSAGE);
             JFileChooser fc = new JFileChooser();
@@ -187,7 +187,10 @@ public class Frame extends JFrame implements ActionListener, ListSelectionListen
             }
             try {
                 if (invoice_File != null && item_File != null){
-                    invoice_table_controller = new Merge_Data(invoice_File, item_File).merge_Invoice_Items();
+                    merge_data= new Merge_Data(invoice_File, item_File);
+                    invoice_table_controller=null;
+                    invoice_dtm.setRowCount(0);
+                    invoice_table_controller=merge_data.merge_Invoice_Items();
                     invoice_Number_Data_Label.setText("");
                     invoice_Data_TF.setText("");
                     customer_Name_TF.setText("");
@@ -209,7 +212,29 @@ public class Frame extends JFrame implements ActionListener, ListSelectionListen
 
         private void saveFileMenuItemActionPerformed(ActionEvent evt) {
         try {
-            new Merge_Data().clear_Restore(invoice_table_controller);
+            if(merge_data==null){
+                JOptionPane.showMessageDialog(this,"No files choose please select file","Save ", JOptionPane.WARNING_MESSAGE);
+
+                JOptionPane.showMessageDialog(this, "Please select Invoice header file", "Invoice Header", JOptionPane.WARNING_MESSAGE);
+                JFileChooser fc = new JFileChooser();
+                File invoice_File=null;
+                File item_File=null;
+                int option = fc.showOpenDialog(this);
+                if (option == JFileChooser.APPROVE_OPTION) {
+                    invoice_File = fc.getSelectedFile();
+                }
+                JOptionPane.showMessageDialog(this, "Please select Invoice lines file", "Invoice Lines", JOptionPane.WARNING_MESSAGE);
+                fc=new JFileChooser();
+                option = fc.showOpenDialog(this);
+                if (option == JFileChooser.APPROVE_OPTION) {
+                    item_File = fc.getSelectedFile();
+                }
+                merge_data=new Merge_Data(invoice_File,item_File);
+                merge_data.add_data(invoice_table_controller);
+            }
+            else{
+                merge_data.clear_Restore(invoice_table_controller);
+            }
             JOptionPane.showMessageDialog(this,"Data saved successfully","Save Updates", JOptionPane.INFORMATION_MESSAGE);
 
         } catch (Exception ex) {

@@ -10,8 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class Invoice_Data_File_Controller {
-    private String file_Path="InvoiceHeader.csv";
-    private File file=new File(file_Path);
+    private File file=null;
 
     public File getFile() {
         return file;
